@@ -1,0 +1,107 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Resumen del periodo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (r(); as r) {
+    <p class="texto-suave ion-padding-horizontal">
+      {{ r.inicio | date: 'd MMM' }} – {{ r.fin.getTime() - 86400000 | date: 'd MMM' }} · día {{ r.diaActual }} de {{ r.diasPeriodo }}
+    </p>
+
+    @if (r.sinDatos) {
+      <ion-card>
+        <ion-card-content>
+          <h2>Registra tu siguiente lectura</h2>
+          <p>Con dos lecturas Vatio calcula tu consumo, la proyección del mes y el valor estimado de tu factura.</p>
+        </ion-card-content>
+      </ion-card>
+    } @else {
+      <!-- Consumo del periodo frente al límite -->
+      <ion-card>
+        <ion-card-content>
+          <p class="texto-suave">Consumo del periodo</p>
+          <div class="fila-entre">
+            <span class="dato-grande">{{ r.consumo | number: '1.0-0' }} kWh</span>
+            <span class="texto-suave">de {{ r.limite | number: '1.0-0' }} kWh de límite</span>
+          </div>
+          <ion-progress-bar [value]="r.pct / 100" [color]="colorBarra()"></ion-progress-bar>
+          <div class="fila-entre">
+            <span>{{ r.pct | number: '1.0-0' }} % del límite</span>
+            <span class="texto-suave">Quedan {{ r.diasRestantes }} días</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Estado frente al límite y alerta de proyección (RF06, RF07) -->
+      @if (r.exceso > 0) {
+        <ion-card color="danger" class="aviso">
+          <ion-card-content>
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <div>
+              <h2>Superaste tu límite por {{ r.exceso | number: '1.0-0' }} kWh</h2>
+              <p>
+                A este ritmo cerrarás el periodo en {{ r.proyeccion | number: '1.0-0' }} kWh. Revisa en Equipos qué consume más.
+              </p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      } @else if (!r.proyeccionConfiable) {
+        <ion-card color="light" class="aviso">
+          <ion-card-content>
+            <ion-icon name="alert-circle-outline"></ion-icon>
+            <div>
+              <h2>Aún no hay proyección</h2>
+              <p>Registra otra lectura en al menos un día para estimar tu consumo del mes.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      } @else if (r.superara) {
+        <ion-card color="warning" class="aviso">
+          <ion-card-content>
+            <ion-icon name="warning-outline"></ion-icon>
+            <div>
+              <h2>Proyección: {{ r.proyeccion | number: '1.0-0' }} kWh (supera {{ r.limite | number: '1.0-0' }})</h2>
+              <p>Para no pasarte, gasta hasta {{ r.kwhDiaPermitido | number: '1.1-1' }} kWh por día.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      } @else {
+        <ion-card color="success" class="aviso">
+          <ion-card-content>
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <div>
+              <h2>Vas bien: proyección de {{ r.proyeccion | number: '1.0-0' }} kWh</h2>
+              <p>Promedio actual: {{ r.promedioDiario | number: '1.1-1' }} kWh por día.</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      <!-- Factura proyectada (RF08) -->
+      <ion-card>
+        <ion-card-content>
+          <p class="texto-suave">{{ r.proyeccionConfiable ? 'Factura proyectada' : 'Costo hasta hoy' }}</p>
+          <div class="fila-entre">
+            <span class="dato-grande">$ {{ r.facturaProyectada | number: '1.0-0' }}</span>
+            <span class="texto-suave">a $ {{ config()?.tarifa | number: '1.0-0' }}/kWh</span>
+          </div>
+          <p class="texto-suave">Llevas $ {{ r.costoActual | number: '1.0-0' }} en lo que va del periodo.</p>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <div class="ion-padding">
+      <ion-button expand="block" size="large" routerLink="/lectura/nueva">
+        <ion-icon slot="start" name="add"></ion-icon>
+        Registrar lectura
+      </ion-button>
+      @if (r.ultima; as u) {
+        <p class="texto-suave ion-text-center">
+          Última lectura: {{ u.valor | number: '1.0-0' }} kWh · {{ u.fecha | date: "d MMM, h:mm a" }}
+        </p>
+      }
+    </div>
+  }
+</ion-content>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Vatio</string>
+    <string name="title_activity_main">Vatio</string>
+    <string name="package_name">co.edu.poli.vatio</string>
+    <string name="custom_url_scheme">co.edu.poli.vatio</string>
+</resources>

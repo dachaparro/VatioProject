@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajustes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (c) {
+    <ion-list lines="full">
+      <ion-list-header><ion-label>Factura</ion-label></ion-list-header>
+      <ion-item>
+        <ion-input
+          type="number"
+          inputmode="decimal"
+          label="Tarifa del kWh ($)"
+          [(ngModel)]="c.tarifa"
+          (ionChange)="guardar()"
+          class="ion-text-end"
+        ></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Inicio del periodo" interface="action-sheet" [(ngModel)]="c.diaInicio" (ionChange)="guardar()">
+          @for (d of dias; track d) {
+            <ion-select-option [value]="d">Día {{ d }}</ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Altitud de la ciudad" interface="popover" [(ngModel)]="c.altitudAlta" (ionChange)="guardar()">
+          <ion-select-option [value]="false">Menos de 1.000 m</ion-select-option>
+          <ion-select-option [value]="true">1.000 m o más</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-list-header><ion-label>Recordatorios</ion-label></ion-list-header>
+      <ion-item>
+        <ion-toggle [(ngModel)]="c.recordatorio.activo" (ionChange)="guardar()">Recordar registrar lectura</ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-select
+          label="Frecuencia"
+          interface="popover"
+          [disabled]="!c.recordatorio.activo"
+          [(ngModel)]="c.recordatorio.frecuencia"
+          (ionChange)="guardar()"
+        >
+          <ion-select-option value="diaria">Diaria, 7:00 p. m.</ion-select-option>
+          <ion-select-option value="semanal">Semanal, lunes 7:00 p. m.</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-list-header><ion-label>Datos</ion-label></ion-list-header>
+      <ion-item button (click)="exportar()">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        <ion-label>Exportar lecturas (CSV)</ion-label>
+      </ion-item>
+      <ion-item button (click)="cargarDemo()">
+        <ion-icon slot="start" name="flash-outline"></ion-icon>
+        <ion-label>Cargar datos de ejemplo</ion-label>
+      </ion-item>
+      <ion-item button (click)="borrar()">
+        <ion-icon slot="start" name="trash-outline" color="danger"></ion-icon>
+        <ion-label color="danger">Borrar todos los datos</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-note class="ion-padding ion-text-center" style="display: block">Tus datos se guardan solo en este teléfono.</ion-note>
+  }
+</ion-content>

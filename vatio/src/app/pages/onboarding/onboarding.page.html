@@ -1,0 +1,71 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Vatio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h1>Bienvenido a Vatio</h1>
+  <p class="texto-suave">Configura tu hogar en un minuto. Los datos se guardan solo en este teléfono.</p>
+
+  <ion-list lines="full">
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="decimal"
+        label="Tarifa del kWh (de tu último recibo)"
+        labelPlacement="stacked"
+        placeholder="$ 900"
+        [(ngModel)]="tarifa"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select label="Día de inicio del periodo" labelPlacement="stacked" interface="action-sheet" [(ngModel)]="diaInicio">
+        @for (d of dias; track d) {
+          <ion-select-option [value]="d">Día {{ d }} de cada mes</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <ion-list-header>
+      <ion-label>Altitud de tu ciudad</ion-label>
+    </ion-list-header>
+    <ion-item lines="none">
+      <ion-segment [(ngModel)]="altitud" (ionChange)="cambiarAltitud()">
+        <ion-segment-button value="baja"><ion-label>Menos de 1.000 m</ion-label></ion-segment-button>
+        <ion-segment-button value="alta"><ion-label>1.000 m o más</ion-label></ion-segment-button>
+      </ion-segment>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="decimal"
+        label="Lectura actual del medidor (kWh)"
+        labelPlacement="stacked"
+        placeholder="04 521"
+        [(ngModel)]="lectura"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="numeric"
+        label="Límite mensual de kWh"
+        labelPlacement="stacked"
+        [(ngModel)]="limite"
+        (ionInput)="tocarLimite()"
+      ></ion-input>
+      <ion-note slot="helper">Sugerido: {{ sugerido }} kWh, el consumo de subsistencia de tu zona</ion-note>
+    </ion-item>
+  </ion-list>
+
+  @if (error()) {
+    <ion-text><p class="error">{{ error() }}</p></ion-text>
+  }
+
+  <ion-button expand="block" class="ion-margin-top" [disabled]="guardando()" (click)="comenzar()">Comenzar</ion-button>
+  <ion-button expand="block" fill="clear" (click)="probarDemo()">Probar con datos de ejemplo</ion-button>
+</ion-content>

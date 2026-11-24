@@ -1,0 +1,68 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/equipos"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ editando ? 'Editar electrodoméstico' : 'Agregar electrodoméstico' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list lines="full">
+    <ion-item>
+      <ion-input label="Nombre" labelPlacement="stacked" placeholder="Ej. Nevera" [(ngModel)]="nombre"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="decimal"
+        label="Potencia (W)"
+        labelPlacement="stacked"
+        placeholder="Está en la etiqueta del equipo"
+        [ngModel]="potencia()"
+        (ngModelChange)="potencia.set($event)"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="decimal"
+        label="Horas de uso al día"
+        labelPlacement="stacked"
+        placeholder="Ej. 0,5 para media hora"
+        [ngModel]="horas()"
+        (ngModelChange)="horas.set($event)"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input
+        type="number"
+        inputmode="numeric"
+        label="Días de uso al mes"
+        labelPlacement="stacked"
+        [ngModel]="dias()"
+        (ngModelChange)="dias.set($event)"
+      ></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-card color="light">
+    <ion-card-content>
+      <strong>{{ kwh() | number: '1.0-1' }} kWh al mes</strong>
+      <p class="texto-suave">≈ $ {{ costo() | number: '1.0-0' }} · potencia × horas × días ÷ 1.000</p>
+    </ion-card-content>
+  </ion-card>
+
+  @if (error()) {
+    <ion-text><p class="error">{{ error() }}</p></ion-text>
+  }
+
+  <div class="ion-padding">
+    <ion-button expand="block" (click)="guardar()">Guardar</ion-button>
+    @if (editando) {
+      <ion-button expand="block" fill="clear" color="danger" (click)="eliminar()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>Eliminar
+      </ion-button>
+    }
+  </div>
+</ion-content>

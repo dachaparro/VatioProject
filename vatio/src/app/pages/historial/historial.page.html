@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Historial</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="vistaModelo" (ionChange)="cambiarVista()">
+      <ion-segment-button value="dia"><ion-label>Día</ion-label></ion-segment-button>
+      <ion-segment-button value="semana"><ion-label>Semana</ion-label></ion-segment-button>
+      <ion-segment-button value="mes"><ion-label>Mes</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-content>
+      <p class="texto-suave">{{ unidad() }}</p>
+      @if (lista().length >= 2) {
+        <app-grafica-barras
+          [barras]="barras()"
+          [referencia]="referencia()"
+          [etiquetaReferencia]="etiquetaRef()"
+          [mostrarValores]="vista() !== 'dia'"
+        ></app-grafica-barras>
+      } @else {
+        <p>Registra al menos dos lecturas para ver tu consumo.</p>
+      }
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list>
+    <ion-list-header><ion-label>Lecturas registradas</ion-label></ion-list-header>
+    @for (l of lista(); track l.id) {
+      <ion-item button [routerLink]="['/lectura', l.id]" detail="true">
+        <ion-label>
+          <h3>{{ l.valor | number: '1.0-0' }} kWh</h3>
+          <p>{{ l.fecha | date: "EEE d MMM y, h:mm a" }}</p>
+        </ion-label>
+        @if (l.consumo !== null) {
+          <ion-note slot="end">+{{ l.consumo | number: '1.0-1' }} kWh</ion-note>
+        }
+      </ion-item>
+    } @empty {
+      <ion-item><ion-label>Aún no hay lecturas.</ion-label></ion-item>
+    }
+  </ion-list>
+  <p class="texto-suave ion-text-center ion-padding">Toca una lectura para editarla o borrarla.</p>
+</ion-content>

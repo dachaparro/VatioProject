@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Límite mensual</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <p class="texto-suave ion-padding-horizontal">Te avisamos antes de que te pases.</p>
+
+  <ion-list-header><ion-label>¿Cuántos kWh quieres gastar al mes?</ion-label></ion-list-header>
+  <div class="stepper">
+    <ion-button fill="outline" (click)="cambiar(-5)" aria-label="Restar 5 kWh"><ion-icon name="remove"></ion-icon></ion-button>
+    <ion-input type="number" inputmode="numeric" [(ngModel)]="limite" aria-label="Límite mensual en kWh"></ion-input>
+    <ion-button fill="outline" (click)="cambiar(5)" aria-label="Sumar 5 kWh"><ion-icon name="add"></ion-icon></ion-button>
+  </div>
+  <p class="ion-text-center texto-suave">kWh por periodo de facturación</p>
+
+  <ion-list-header><ion-label>Sugerencias</ion-label></ion-list-header>
+  <div class="ion-padding-horizontal">
+    <ion-chip [outline]="limite !== subsistencia()" color="primary" (click)="usar(subsistencia())">
+      Subsistencia: {{ subsistencia() }}
+    </ion-chip>
+    @if (promedio(); as p) {
+      <ion-chip [outline]="limite !== p" color="primary" (click)="usar(p)">Tu promedio: {{ p }}</ion-chip>
+    }
+  </div>
+
+  <ion-list lines="full" class="ion-margin-top">
+    <ion-list-header><ion-label>Avisos</ion-label></ion-list-header>
+    <ion-item>
+      <ion-toggle [(ngModel)]="a80">Al llegar al 80 %</ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-toggle [(ngModel)]="a100">Al llegar al 100 %</ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-toggle [(ngModel)]="proyeccion">Si la proyección lo supera</ion-toggle>
+    </ion-item>
+  </ion-list>
+
+  <ion-card color="light">
+    <ion-card-content>
+      <strong>≈ $ {{ (limite || 0) * tarifa() | number: '1.0-0' }} al mes</strong>
+      <p class="texto-suave">con tu tarifa de $ {{ tarifa() | number: '1.0-0' }}/kWh</p>
+    </ion-card-content>
+  </ion-card>
+
+  <div class="ion-padding">
+    <ion-button expand="block" (click)="guardar()">Guardar límite</ion-button>
+  </div>
+</ion-content>

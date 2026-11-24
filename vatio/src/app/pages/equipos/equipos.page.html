@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Electrodomésticos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <p class="texto-suave ion-padding-horizontal">Consumo estimado al mes, de mayor a menor.</p>
+
+  <ion-list lines="full">
+    @for (e of lista(); track e.id) {
+      <ion-item button [routerLink]="['/equipo', e.id]" detail="false">
+        <ion-label>
+          <h2>{{ e.nombre }}</h2>
+          <p>{{ e.potenciaW | number: '1.0-0' }} W · {{ e.horasDia | number: '1.0-1' }} h/día · {{ e.diasMes }} días</p>
+          <ion-progress-bar [value]="e.proporcion"></ion-progress-bar>
+        </ion-label>
+        <ion-note slot="end" class="derecha">
+          <strong>{{ e.kwh | number: '1.0-1' }} kWh</strong><br />
+          $ {{ e.kwh * tarifa() | number: '1.0-0' }}
+        </ion-note>
+      </ion-item>
+    } @empty {
+      <ion-item lines="none">
+        <ion-label class="ion-text-wrap">Agrega tus electrodomésticos para saber cuáles pesan más en tu factura.</ion-label>
+      </ion-item>
+    }
+  </ion-list>
+
+  @if (lista().length) {
+    <ion-card color="light">
+      <ion-card-content>
+        <strong>Total estimado: {{ total() | number: '1.0-1' }} kWh/mes</strong>
+        <p class="texto-suave">≈ $ {{ total() * tarifa() | number: '1.0-0' }} con tu tarifa actual</p>
+      </ion-card-content>
+    </ion-card>
+  }
+
+  <div class="ion-padding">
+    <ion-button expand="block" routerLink="/equipo/nuevo">
+      <ion-icon slot="start" name="add"></ion-icon>
+      Agregar electrodoméstico
+    </ion-button>
+  </div>
+</ion-content>

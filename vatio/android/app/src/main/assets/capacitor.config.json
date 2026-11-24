@@ -1,0 +1,10 @@
+{
+	"appId": "co.edu.poli.vatio",
+	"appName": "Vatio",
+	"webDir": "dist/vatio/browser",
+	"plugins": {
+		"LocalNotifications": {
+			"iconColor": "#3880ff"
+		}
+	}
+}

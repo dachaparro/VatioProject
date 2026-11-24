@@ -1,0 +1,86 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inicio"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ editando ? 'Editar lectura' : 'Nueva lectura' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Foto del medidor como evidencia (RF03) -->
+  <div class="foto">
+    @if (fotoVista()) {
+      <img [src]="fotoVista()" alt="Foto del medidor" />
+    } @else {
+      <ion-icon name="camera-outline" size="large" color="medium"></ion-icon>
+      <strong>Foto del medidor (opcional)</strong>
+    }
+  </div>
+  <div class="botones-foto ion-padding-horizontal">
+    <ion-button fill="outline" expand="block" class="ion-flex-1" (click)="tomarFoto('camara')">
+      <ion-icon slot="start" name="camera-outline"></ion-icon>Cámara
+    </ion-button>
+    <ion-button fill="outline" expand="block" class="ion-flex-1" (click)="tomarFoto('galeria')">
+      <ion-icon slot="start" name="images-outline"></ion-icon>Galería
+    </ion-button>
+  </div>
+
+  <ion-list lines="full" class="ion-margin-top">
+    <ion-item class="valor">
+      <ion-input
+        type="number"
+        inputmode="decimal"
+        label="Lectura del medidor (kWh)"
+        labelPlacement="stacked"
+        placeholder="04 605"
+        [(ngModel)]="valor"
+        (ionInput)="cambiarValor()"
+      ></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Fecha y hora</ion-label>
+      <ion-datetime-button datetime="fecha-lectura"></ion-datetime-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-modal [keepContentsMounted]="true">
+    <ng-template>
+      <ion-datetime
+        id="fecha-lectura"
+        presentation="date-time"
+        locale="es-CO"
+        [max]="maxFecha"
+        [(ngModel)]="fecha"
+        (ionChange)="cambiarFecha()"
+        [showDefaultButtons]="true"
+        doneText="Listo"
+        cancelText="Cancelar"
+      ></ion-datetime>
+    </ng-template>
+  </ion-modal>
+
+  <div class="info">
+    @if (anterior(); as a) {
+      <p class="texto-suave">Lectura anterior: {{ a.valor | number: '1.0-0' }} kWh · {{ a.fecha | date: 'd MMM, h:mm a' }}</p>
+      @if (consumoDesde() !== null && consumoDesde()! >= 0) {
+        <p><strong>Consumo desde entonces: {{ consumoDesde() | number: '1.0-1' }} kWh</strong></p>
+      }
+    } @else {
+      <p class="texto-suave">Esta será tu primera lectura registrada.</p>
+    }
+  </div>
+
+  @if (error()) {
+    <ion-text><p class="error">{{ error() }}</p></ion-text>
+  }
+
+  <div class="ion-padding">
+    <ion-button expand="block" size="large" (click)="guardar()">Guardar lectura</ion-button>
+    @if (editando) {
+      <ion-button expand="block" fill="clear" color="danger" (click)="eliminar()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>Eliminar lectura
+      </ion-button>
+    }
+  </div>
+</ion-content>
